@@ -5,17 +5,20 @@
   </div>
 
   <div class='container'>
-    <transition>
-    <p v-if='paraIsVisible'>This is only sometimes visible...</p>
+    <transition name='para'>
+      <p v-if='paraIsVisible'>This is only sometimes visible...</p>
     </transition>
 
     <button @click='toggleParagraph'>Toggle Paragraph</button>
   </div>
 
-  <base-modal @close='hideDialog' v-if='dialogIsVisible'>
-    <p>This is a test dialog!</p>
-    <button @click='hideDialog'>Close it!</button>
-  </base-modal>
+
+    <base-modal @close='hideDialog' :open='dialogIsVisible'>
+      <p>This is a test dialog!</p>
+      <button @click='hideDialog'>Close it!</button>
+    </base-modal>
+
+
   <div class='container'>
     <button @click='showDialog'>Show Dialog</button>
   </div>
@@ -27,12 +30,12 @@ export default {
     return {
       animatedBlock: false,
       dialogIsVisible: false,
-      paraIsVisible: false,
+      paraIsVisible: false
     };
   },
   methods: {
     animateBlock() {
-      this.animatedBlock =  !this.animatedBlock;
+      this.animatedBlock = !this.animatedBlock;
     },
     showDialog() {
       this.dialogIsVisible = true;
@@ -41,7 +44,7 @@ export default {
       this.dialogIsVisible = false;
     },
     toggleParagraph() {
-      this.paraIsVisible = ! this.paraIsVisible;
+      this.paraIsVisible = !this.paraIsVisible;
     }
   }
 };
@@ -98,10 +101,41 @@ button:active {
 
 .animate {
   /* transform: translateX(-150px); */
-  animation: slide-fade 0.3s ease-out forwards;
+  animation: slide-scale 0.3s ease-out forwards;
 }
 
-@keyframes slide-fade {
+.para-enter-from {
+  /*opacity: 0;*/
+  /*transform: translateY(-50px);*/
+}
+
+.para-enter-active {
+  /*transition: all 0.3s ease-out;*/
+  animation: slide-scale 0.3s ease-out;
+}
+
+.para-enter-to {
+  /*opacity: 1;*/
+  /*transform: translateY(0);*/
+}
+
+.para-leave-from {
+  /*opacity: 1;*/
+  /*transform: translateY(0);*/
+}
+
+.para-leave-active {
+  /*transition: all 0.3s ease-in;*/
+  animation: slide-scale 0.3s ease-in;
+}
+
+.para-leave-to {
+  /*opacity: 0;*/
+  /*transform: translateY(50px);*/
+}
+
+
+@keyframes slide-scale {
   0% {
     transform: translateX(0) scale(1);
   }
