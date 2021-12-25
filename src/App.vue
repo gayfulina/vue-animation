@@ -5,18 +5,31 @@
   </div>
 
   <div class='container'>
-    <transition name='para'>
+    <transition name='para'
+                @before-enter='beforeEnter'
+                @after-enter='afterEnter'
+                @enter='enter'
+                @before-leave='beforeLeave'
+                @leave='leave'
+                @after-leave='afterLeave'>
       <p v-if='paraIsVisible'>This is only sometimes visible...</p>
     </transition>
 
     <button @click='toggleParagraph'>Toggle Paragraph</button>
   </div>
 
+  <div class='container'>
+    <transition name='fade-button' mode='out-in'>
+      <button @click='showUsers' v-if='!usersAreVisible'>Show Users</button>
+      <button @click='hideUsers' v-else>Hide Users</button>
+    </transition>
+  </div>
 
-    <base-modal @close='hideDialog' :open='dialogIsVisible'>
-      <p>This is a test dialog!</p>
-      <button @click='hideDialog'>Close it!</button>
-    </base-modal>
+
+  <base-modal @close='hideDialog' :open='dialogIsVisible'>
+    <p>This is a test dialog!</p>
+    <button @click='hideDialog'>Close it!</button>
+  </base-modal>
 
 
   <div class='container'>
@@ -30,10 +43,53 @@ export default {
     return {
       animatedBlock: false,
       dialogIsVisible: false,
-      paraIsVisible: false
+      paraIsVisible: false,
+      usersAreVisible: false
     };
   },
   methods: {
+    beforeEnter(el) {
+      console.log('beforeEnter');
+      console.log(el);
+      el.style.opacity = 0;
+    },
+    enter(el, done) {
+      console.log('enter');
+      console.log(el);
+      let round = 1;
+      const interval = setInterval(function() {
+        el.style.opacity = round * 0.01;
+        round++;
+        if(round > 100) {
+          clearInterval(interval);
+          done();
+        }
+      }, 20)
+    },
+    afterEnter(el) {
+      console.log('afterEnter');
+      console.log(el);
+    },
+    beforeLeave(el) {
+      console.log('beforeLeave');
+      console.log(el);
+      el.style.opacity = 1;
+    },
+    leave(el, done) {
+      console.log('leave', el);
+      let round = 1;
+      const interval = setInterval(function() {
+        el.style.opacity = 1 - round * 0.01;
+        round++;
+        if(round > 100) {
+          clearInterval(interval);
+          done();
+        }
+      }, 20)
+    },
+    afterLeave(el) {
+      console.log('afterLeave', el);
+    },
     animateBlock() {
       this.animatedBlock = !this.animatedBlock;
     },
@@ -45,6 +101,12 @@ export default {
     },
     toggleParagraph() {
       this.paraIsVisible = !this.paraIsVisible;
+    },
+    showUsers() {
+      this.usersAreVisible = true;
+    },
+    hideUsers() {
+      this.usersAreVisible = false;
     }
   }
 };
@@ -104,36 +166,53 @@ button:active {
   animation: slide-scale 0.3s ease-out forwards;
 }
 
-.para-enter-from {
-  /*opacity: 0;*/
-  /*transform: translateY(-50px);*/
-}
+/*.para-enter-from {*/
+/*  !*opacity: 0;*!*/
+/*  !*transform: translateY(-50px);*!*/
+/*}*/
 
-.para-enter-active {
-  /*transition: all 0.3s ease-out;*/
-  animation: slide-scale 0.3s ease-out;
-}
+/*.para-enter-active {*/
+/*  !*transition: all 0.3s ease-out;*!*/
+/*  animation: slide-scale 2s ease-out;*/
+/*}*/
 
-.para-enter-to {
-  /*opacity: 1;*/
-  /*transform: translateY(0);*/
-}
+/*.para-enter-to {*/
+/*  !*opacity: 1;*!*/
+/*  !*transform: translateY(0);*!*/
+/*}*/
 
-.para-leave-from {
-  /*opacity: 1;*/
-  /*transform: translateY(0);*/
-}
+/*.para-leave-from {*/
+/*  !*opacity: 1;*!*/
+/*  !*transform: translateY(0);*!*/
+/*}*/
 
-.para-leave-active {
-  /*transition: all 0.3s ease-in;*/
-  animation: slide-scale 0.3s ease-in;
-}
+/*.para-leave-active {*/
+/*  !*transition: all 0.3s ease-in;*!*/
+/*  animation: slide-scale 0.3s ease-in;*/
+/*}*/
 
 .para-leave-to {
   /*opacity: 0;*/
   /*transform: translateY(50px);*/
 }
 
+.fade-button-enter-from,
+.fade-button-leave-from {
+  opacity: 0;
+}
+
+.fade-button-enter-active {
+  transition: opacity 0.3s ease-out;
+}
+
+.fade-button-leave-active {
+  transition: opacity 0.3s ease-in;
+}
+
+.fade-button-enter-to,
+.fade-button-leave-to {
+  opacity: 1;
+}
 
 @keyframes slide-scale {
   0% {
